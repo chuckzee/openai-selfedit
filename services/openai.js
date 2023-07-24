@@ -3,6 +3,7 @@ const { OpenAIApi, Configuration } = require("openai");
 const { generateDevelopmentContext } = require("./context");
 
 // Create a new configuration with the API key
+// This code sets up the OpenAI API client.
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -54,8 +55,16 @@ async function generateCompletion(prompt) {
 
     return reply;
   } catch (error) {
-    console.error("OpenAI error:", error);
-    throw error;
+    if (
+      error.response &&
+      error.response.data &&
+      error.response.data.error &&
+      error.response.data.error.message
+    ) {
+      throw new Error(error.response.data.error.message);
+    } else {
+      throw new Error("Something went wrong. Please try again later.");
+    }
   }
 }
 

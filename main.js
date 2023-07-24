@@ -34,24 +34,32 @@ async function handleSubmit(event) {
   messageInput.disabled = true;
   messageForm.querySelector("button[type='submit']").disabled = true;
 
-  const response = await fetch("/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ prompt: message }),
-  });
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt: message }),
+    });
 
-  const data = await response.json();
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
 
-  addMessage(message, true);
+    const data = await response.json();
 
-  addMessage(data.reply);
+    addMessage(message, true);
 
-  messageInput.value = "";
+    addMessage(data.reply);
+  } catch (error) {
+    addMessage("Something went wrong.");
+  } finally {
+    messageInput.value = "";
 
-  messageInput.disabled = false;
-  messageForm.querySelector("button[type='submit']").disabled = false;
+    messageInput.disabled = false;
+    messageForm.querySelector("button[type='submit']").disabled = false;
+  }
 }
 
 messageForm.addEventListener("submit", handleSubmit);
