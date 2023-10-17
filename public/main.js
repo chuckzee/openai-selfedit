@@ -23,9 +23,8 @@ function toggleDarkMode() {
 const darkModeButton = document.getElementById("dark-mode-button");
 darkModeButton.addEventListener("click", toggleDarkMode);
 
-// Set font to a fun style
-document.head.innerHTML += "<style>@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');</style>";
-document.body.style.fontFamily = "'Bungee', cursive;";
+// Set font to Comic Sans
+document.body.style.fontFamily = "Comic Sans MS, cursive;";
 
 async function handleSubmit(event) {
   event.preventDefault();
@@ -34,24 +33,32 @@ async function handleSubmit(event) {
   messageInput.disabled = true;
   messageForm.querySelector("button[type='submit']").disabled = true;
 
-  const response = await fetch("/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ prompt: message }),
-  });
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt: message }),
+    });
 
-  const data = await response.json();
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
 
-  addMessage(message, true);
+    const data = await response.json();
 
-  addMessage(data.reply);
+    addMessage(message, true);
 
-  messageInput.value = "";
+    addMessage(data.reply);
+  } catch (error) {
+    addMessage("Something went wrong.");
+  } finally {
+    messageInput.value = "";
 
-  messageInput.disabled = false;
-  messageForm.querySelector("button[type='submit']").disabled = false;
+    messageInput.disabled = false;
+    messageForm.querySelector("button[type='submit']").disabled = false;
+  }
 }
 
 messageForm.addEventListener("submit", handleSubmit);

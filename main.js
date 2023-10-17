@@ -23,9 +23,8 @@ function toggleDarkMode() {
 const darkModeButton = document.getElementById("dark-mode-button");
 darkModeButton.addEventListener("click", toggleDarkMode);
 
-// Set font to a fun style
-document.head.innerHTML += "<style>@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');</style>";
-document.body.style.fontFamily = "'Bungee', cursive;";
+// Set font to Comic Sans
+document.body.style.fontFamily = "Comic Sans MS, cursive;";
 
 async function handleSubmit(event) {
   event.preventDefault();
